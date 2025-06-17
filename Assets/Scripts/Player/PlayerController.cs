@@ -16,8 +16,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private Vector2 groundCheckSize;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float coyoteTime;
+    private float coyoteTimer;
     private bool isGrounded;
-    private bool jumpQueued = false;
+    private bool jumpQueued;
+    private bool jumped;
     private Rigidbody2D rb;
     private InputSystem_Actions inputActions;
 
@@ -25,6 +28,9 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         moveDirection = 1;
+        coyoteTimer = 0;
+        jumpQueued = false;
+        jumped =  false;
         // Initialize Input Actions
         inputActions = new InputSystem_Actions();
     }
@@ -54,18 +60,21 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (!isGrounded)
+            RunCoyoteTimer();
     }
 
     private void FixedUpdate()
     {
         if (jumpQueued)
         {
+            rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse);
             jumpQueued = false;
+            jumped = true;
         }
         Move();
-        isGrounded = Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0f, groundLayer);
+        CheckGrounded();
     }
 
     private void Move()
@@ -89,7 +98,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnJumpPerformed(InputAction.CallbackContext ctx)
     {
-        if (isGrounded) {
+        if (isGrounded || (coyoteTimer < coyoteTime && !jumped)) {
             jumpQueued = true;
         }
     }
@@ -106,6 +115,24 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("Side collision detected with Wall");
                 moveDirection *= -1;
             }
+        }
+    }
+
+    private void CheckGrounded()
+    {
+        isGrounded = Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0f, groundLayer);
+        if (isGrounded)
+        {
+            coyoteTimer = 0;
+            jumped = false;
+        }
+    }
+
+    private void RunCoyoteTimer()
+    {
+        if (coyoteTimer < coyoteTime)
+        {
+            coyoteTimer += Time.deltaTime;
         }
     }
 
