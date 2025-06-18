@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
     private float damageFramesTimer;
     // Components
     private Rigidbody2D rb;
+    private BoxCollider2D collider2d;
     private InputSystem_Actions inputActions;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
@@ -57,6 +58,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        collider2d = GetComponent<BoxCollider2D>();
         moveDirection = 1;
         coyoteTimer = 0;
         jumpQueued = false;
@@ -166,7 +168,7 @@ public class PlayerController : MonoBehaviour
 
             if (Mathf.Abs(normal.x) > Mathf.Abs(normal.y))
             {
-                Debug.Log("Side collision detected with Wall");
+                //Debug.Log("Side collision detected with Wall");
                 ChangeDirection();
             }
         }
@@ -185,10 +187,12 @@ public class PlayerController : MonoBehaviour
             coyoteTimer = 0;
             jumped = false;
             stompHitbox.enabled = false;
+            collider2d.size = new Vector2(0.8f, 0.9f);
         }
-        else
+        else if (playerState != States.Damage)
         {
             stompHitbox.enabled = true;
+            collider2d.size = new Vector2(0.8f, 0.8f);
         }
     }
 
@@ -299,6 +303,7 @@ public class PlayerController : MonoBehaviour
     private void DamageRecoil(float mult)
     {
         float horizontalRecoil = damageRecoilHorizontal * moveDirection * -1;
+        rb.velocity = Vector2.zero;
         rb.AddForce(new Vector2(horizontalRecoil * mult, damageRecoilVertical * mult), ForceMode2D.Impulse);
     }
 
@@ -313,5 +318,10 @@ public class PlayerController : MonoBehaviour
     {
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.AddForce(new Vector2(0, bounceSpeed), ForceMode2D.Impulse);
+    }
+
+    public void OnStomp()
+    {
+        StompBounce();
     }
 }
