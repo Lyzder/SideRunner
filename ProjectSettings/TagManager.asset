@@ -18,7 +18,7 @@ TagManager:
   - PlayerInvincible
   - Enemies
   - EnemiesInvincible
-  - 
+  - PlayerBullets
   - 
   - 
   - 
@@ -45,4 +45,7 @@ TagManager:
     locked: 0
   - name: Entities
     uniqueID: 1380552245
+    locked: 0
+  - name: Effects
+    uniqueID: 1661907117
     locked: 0

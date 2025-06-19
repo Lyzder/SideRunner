@@ -28,6 +28,10 @@ public abstract class EnemyBase : MonoBehaviour
     private short moveDirection;
     private enum EnemyStates { Patrolling, Chasing, Idle, Damage, Cooldown}
     private EnemyStates enemyState;
+    [Header("Effects")]
+    [SerializeField] protected GameObject explosionEffect;
+    [Header("Sound Effects")]
+    [SerializeField] protected AudioClip explosionSfx;
     // Components
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;

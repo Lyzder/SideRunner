@@ -132,7 +132,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.8, y: 0.9}
+  m_Size: {x: 0.8, y: 0.89}
   m_EdgeRadius: 0
 --- !u!50 &8877977864851077628
 Rigidbody2D:
@@ -182,16 +182,27 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   coyoteTime: 0.08
-  hp: 3
-  maxHp: 3
-  ammo: 0
-  shotCooldown: 0
+  hp: 5
+  maxHp: 5
+  ammo: 3
+  bulletPrefab: {fileID: 7043661886269152835, guid: 2cb66e5de12378c4db8c23617b3645e6, type: 3}
+  bulletSpawnOffset: {x: 0.45, y: -0.17, z: 0}
+  shotCooldown: 1.5
   damageFrames: 0.5
   iFrames: 1.5
   invincible: 0
   damageRecoilHorizontal: 3
   damageRecoilVertical: 3
   stompHitbox: {fileID: 6858825147757187031}
+  jumpEffect: {fileID: 282208382094743071, guid: 7949040c53bdd964bbd34c8cc74c155c, type: 3}
+  shootEffect: {fileID: 8039358606523259641, guid: 246e5edc72e581444b5072bbecb119a9, type: 3}
+  jumpEffectOffset: {x: 0, y: 0.15, z: 0}
+  shootEffectOffset: {x: 0.45, y: -0.17, z: 0}
+  jumpSfx: {fileID: 8300000, guid: 77c72cf1d06bab449849f67f16fb5d45, type: 3}
+  shootSfx: {fileID: 8300000, guid: 235e8584a7e581145a9e715f3a31d3ab, type: 3}
+  hurtSfx: {fileID: 8300000, guid: 192083559e411c444a5e8846e0e33d31, type: 3}
+  noAmmoSfx: {fileID: 8300000, guid: 5b6d54251078a13468b45dccbb6680d3, type: 3}
+  reloadSfx: {fileID: 8300000, guid: d56b49201a1b3264fb89879a7347c755, type: 3}
 --- !u!95 &6346388047930343913
 Animator:
   serializedVersion: 5
@@ -223,7 +234,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3745099511277287606}
   - component: {fileID: 6858825147757187031}
-  m_Layer: 2
+  - component: {fileID: 4825745195478027606}
+  m_Layer: 11
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -239,7 +251,7 @@ Transform:
   m_GameObject: {fileID: 6785241966831926643}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.54, z: 0}
+  m_LocalPosition: {x: 0, y: -0.53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -252,7 +264,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6785241966831926643}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -277,7 +289,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.05}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -288,5 +300,17 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.8, y: 0.1}
+  m_Size: {x: 0.75, y: 0.1}
   m_EdgeRadius: 0
+--- !u!114 &4825745195478027606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6785241966831926643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2563d1defda6fe34e860ad6ffa05cd55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

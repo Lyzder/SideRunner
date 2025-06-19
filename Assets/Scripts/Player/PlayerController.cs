@@ -26,6 +26,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private short hp;
     [SerializeField] private short maxHp;
     public short ammo;
+    [Header("Shooting")]
+    [SerializeField] GameObject bulletPrefab;
+    public Vector3 bulletSpawnOffset;
     [SerializeField] private float shotCooldown;
     private float shotCdTimer;
     [Header("Interactions")]
@@ -37,6 +40,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private BoxCollider2D stompHitbox;
     private float iFramesTimer;
     private float damageFramesTimer;
+    [Header("Effects")]
+    [SerializeField] GameObject jumpEffect;
+    [SerializeField] GameObject shootEffect;
+    [SerializeField] GameObject pickupEffect;
+    public Vector3 jumpEffectOffset;
+    public Vector3 shootEffectOffset;
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip jumpSfx;
+    [SerializeField] private AudioClip shootSfx;
+    [SerializeField] private AudioClip hurtSfx;
+    [SerializeField] private AudioClip noAmmoSfx;
+    [SerializeField] private AudioClip reloadSfx;
+    [SerializeField] private AudioClip deadSfx;
     // Components
     private Rigidbody2D rb;
     private BoxCollider2D collider2d;
@@ -96,6 +112,8 @@ public class PlayerController : MonoBehaviour
     {
         if (!isGrounded)
             RunCoyoteTimer();
+        if (shotCdTimer > 0)
+            AttackCooldown();
         UpdateAnimator();
     }
 
@@ -103,10 +121,7 @@ public class PlayerController : MonoBehaviour
     {
         if (jumpQueued)
         {
-            rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse);
-            jumpQueued = false;
-            jumped = true;
+            Jump();
         }
         Move();
         CheckGrounded();
@@ -117,6 +132,43 @@ public class PlayerController : MonoBehaviour
         if (playerState == States.Damage)
             return;
         rb.velocity = new Vector2(moveSpeed * moveDirection, rb.velocity.y);
+    }
+
+    private void Jump()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, 0);
+        rb.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse);
+        jumpQueued = false;
+        jumped = true;
+        Instantiate(jumpEffect, groundCheck.position + jumpEffectOffset, Quaternion.identity);
+        AudioManager.Instance.PlaySFX(jumpSfx);
+    }
+
+    private void Shoot()
+    {
+        Bullet bullet;
+        GameObject effect;
+        // Spawn bullet
+        Vector3 bulletOffset = new Vector3(bulletSpawnOffset.x * moveDirection, bulletSpawnOffset.y, bulletSpawnOffset.z);
+        bullet = Instantiate(bulletPrefab, transform.position + bulletOffset, Quaternion.identity).GetComponent<Bullet>();
+        bullet.SetDirection(moveDirection);
+        shotCdTimer = shotCooldown;
+        ammo -= 1;
+        // Spawn Effect
+        Vector3 effectOffset = new Vector3(shootEffectOffset.x * moveDirection, shootEffectOffset.y, shootEffectOffset.z);
+        effect = Instantiate(shootEffect);
+        effect.transform.SetParent(transform);
+        effect.transform.localPosition = effectOffset;
+        effect.transform.localRotation = Quaternion.identity;
+        if (moveDirection > 0)
+        {
+            effect.GetComponent<ParticleSystem>().GetComponent<ParticleSystemRenderer>().flip = new Vector3(1f, 0);
+        }
+        else if (moveDirection < 0)
+        {
+            effect.GetComponent<ParticleSystem>().GetComponent<ParticleSystemRenderer>().flip = new Vector3(0f, 0);
+        }
+        AudioManager.Instance.PlaySFX(shootSfx);
     }
 
     private void OnMovePerformed(InputAction.CallbackContext ctx)
@@ -154,9 +206,14 @@ public class PlayerController : MonoBehaviour
     {
         if (playerState == States.Damage)
             return;
-        if (ammo <= 0 || shotCdTimer > 0)
+        if (shotCdTimer > 0)
             return;
-        //TODO
+        if (ammo <= 0)
+        {
+            AudioManager.Instance.PlaySFX(noAmmoSfx);
+            return;
+        }
+        Shoot();
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -187,12 +244,12 @@ public class PlayerController : MonoBehaviour
             coyoteTimer = 0;
             jumped = false;
             stompHitbox.enabled = false;
-            collider2d.size = new Vector2(0.8f, 0.9f);
+            collider2d.size = new Vector2(0.8f, 0.89f);
         }
         else if (playerState != States.Damage)
         {
             stompHitbox.enabled = true;
-            collider2d.size = new Vector2(0.8f, 0.8f);
+            collider2d.size = new Vector2(0.8f, 0.75f);
         }
     }
 
@@ -240,8 +297,8 @@ public class PlayerController : MonoBehaviour
             return;
         hp -= 1;
         playerState = States.Damage;
-        //AudioManager.Instance.PlaySFX(hurtSfx);
         gameObject.layer = LayerMask.NameToLayer("PlayerInvincible");
+        AudioManager.Instance.PlaySFX(hurtSfx);
         if (hp <= 0)
         {
             isAlive = false;
@@ -249,7 +306,8 @@ public class PlayerController : MonoBehaviour
             //DisableControl();
             moveInput = 0;
             //StartCoroutine(DeadSequence());
-            DamageRecoil(1.5f);
+            DamageRecoil(2f);
+            AudioManager.Instance.PlaySFX(deadSfx);
         }
         else
         {
@@ -259,7 +317,7 @@ public class PlayerController : MonoBehaviour
             invincible = true;
             StartCoroutine(InvulnerableTimer());
             StartCoroutine(DamageTimer());
-            DamageRecoil(1);
+            DamageRecoil(1.5f);
         }
     }
 
@@ -309,9 +367,14 @@ public class PlayerController : MonoBehaviour
 
     private void AttackCooldown()
     {
-        if (shotCdTimer == 0)
-            return;
         shotCdTimer -= Time.deltaTime;
+        if (shotCdTimer <= 0)
+        {
+            if (ammo > 0)
+                AudioManager.Instance.PlaySFX(reloadSfx);
+            else
+                AudioManager.Instance.PlaySFX(noAmmoSfx);
+        }
     }
 
     private void StompBounce()
@@ -323,5 +386,22 @@ public class PlayerController : MonoBehaviour
     public void OnStomp()
     {
         StompBounce();
+    }
+
+    public void Heal(short amount)
+    {
+        hp += amount;
+        if (hp > maxHp)
+            hp = maxHp;
+    }
+
+    public void Reload(short amount)
+    {
+        ammo += amount;
+    }
+
+    public void PlayPickup()
+    {
+        Instantiate(pickupEffect, transform);
     }
 }
