@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,13 +8,20 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     private bool isPaused;
-    [SerializeField] GameObject playerPrefab;
     private int score;
     private short stage;
     private Vector3 playerSpawn;
     private Vector3 targetSpawnPosition;
     private bool shouldSpawnPlayer = false;
     private string previousScene;
+    public PlayerController player;
+    [Header("Prefabs")]
+    [SerializeField] GameObject hudPrefab;
+    [SerializeField] GameObject playerPrefab;
+    private GameObject activeHud;
+    // Events
+    public event Action<int> OnScoreChanged;
+    public event Action<PlayerController> OnPlayerRegistered;
 
     private void Awake()
     {
@@ -31,7 +39,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
@@ -63,6 +70,7 @@ public class GameManager : MonoBehaviour
     {
         // Unsubscribe to avoid being called again for future scenes
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.SetActiveScene(scene);
 
         if (!shouldSpawnPlayer)
             return;
@@ -77,11 +85,20 @@ public class GameManager : MonoBehaviour
 
         player.transform.position = targetSpawnPosition;
         shouldSpawnPlayer = false;
+
+        activeHud = Instantiate(hudPrefab);
         SceneManager.UnloadSceneAsync(previousScene);
     }
 
     public void AddScore(int score)
     {
         this.score += score;
+        OnScoreChanged?.Invoke(this.score);
+    }
+
+    public void RegisterPlayer(PlayerController player)
+    {
+        this.player = player;
+        OnPlayerRegistered?.Invoke(player);
     }
 }

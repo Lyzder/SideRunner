@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -68,6 +69,9 @@ public class PlayerController : MonoBehaviour
         Firing = 2,
     }
     public States playerState {  get; private set; }
+    // Events
+    public event Action<short> OnHealthChanged;
+    public event Action<short> OnAmmoChanged;
 
     private void Awake()
     {
@@ -86,7 +90,9 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        GameManager.Instance.RegisterPlayer(this);
+        OnHealthChanged?.Invoke(hp);
+        OnAmmoChanged?.Invoke(ammo);
     }
 
     private void OnEnable()
@@ -154,6 +160,7 @@ public class PlayerController : MonoBehaviour
         bullet.SetDirection(moveDirection);
         shotCdTimer = shotCooldown;
         ammo -= 1;
+        OnAmmoChanged?.Invoke(ammo);
         // Spawn Effect
         Vector3 effectOffset = new Vector3(shootEffectOffset.x * moveDirection, shootEffectOffset.y, shootEffectOffset.z);
         effect = Instantiate(shootEffect);
@@ -297,6 +304,7 @@ public class PlayerController : MonoBehaviour
             return;
         hp -= 1;
         playerState = States.Damage;
+        OnHealthChanged?.Invoke(hp);
         gameObject.layer = LayerMask.NameToLayer("PlayerInvincible");
         AudioManager.Instance.PlaySFX(hurtSfx);
         if (hp <= 0)
@@ -393,11 +401,13 @@ public class PlayerController : MonoBehaviour
         hp += amount;
         if (hp > maxHp)
             hp = maxHp;
+        OnHealthChanged?.Invoke(hp);
     }
 
     public void Reload(short amount)
     {
         ammo += amount;
+        OnAmmoChanged?.Invoke(ammo);
     }
 
     public void PlayPickup()
