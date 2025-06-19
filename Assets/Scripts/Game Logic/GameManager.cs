@@ -16,9 +16,11 @@ public class GameManager : MonoBehaviour
     private bool shouldSpawnPlayer = false;
     private string previousScene;
     public PlayerController player;
+    private Boss boss;
     [Header("Prefabs")]
     [SerializeField] GameObject hudPrefab;
     [SerializeField] GameObject playerPrefab;
+    [SerializeField] GameObject eventSystem;
     private GameObject activeHud;
     // Events
     public event Action<int> OnScoreChanged;
@@ -35,6 +37,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+        Instantiate(eventSystem);
     }
 
     // Start is called before the first frame update
@@ -46,6 +49,12 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnDisable()
+    {
+        if (boss != null)
+            boss.OnDeath -= TriggerVictory;
     }
 
     public void PauseGame()
@@ -67,6 +76,16 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
     }
 
+    public void LoadScene(string sceneName)
+    {
+        previousScene = SceneManager.GetActiveScene().name;
+
+        // Subscribe to the sceneLoaded event
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        // Load the scene (additive or single depending on your needs)
+        SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // Unsubscribe to avoid being called again for future scenes
@@ -77,18 +96,11 @@ public class GameManager : MonoBehaviour
         if (!shouldSpawnPlayer)
             return;
 
-        // Try to find the player in the new scene
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-
-        if (player == null)
-        {
-            player = Instantiate(playerPrefab);
-        }
+        GameObject player = Instantiate(playerPrefab);
 
         player.transform.position = targetSpawnPosition;
         shouldSpawnPlayer = false;
 
-        //SetCameraFollow();
         activeHud = Instantiate(hudPrefab);
     }
 
@@ -104,10 +116,25 @@ public class GameManager : MonoBehaviour
         OnPlayerRegistered?.Invoke(player);
     }
 
-    //private void SetCameraFollow()
-    //{
-    //    GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
-    //    CinemachineVirtualCamera virtualCamera = camera.GetComponentInChildren<CinemachineVirtualCamera>();
-    //    virtualCamera.Follow = player.gameObject.transform;
-    //}
+    public int GetScore()
+    {
+        return score;
+    }
+
+    public void RegisterBoss(Boss boss)
+    {
+        if (this.boss != null)
+        {
+            this.boss.OnDeath -= TriggerVictory;
+        }
+
+        this.boss = boss;
+
+        this.boss.OnDeath += TriggerVictory;
+    }
+
+    private void TriggerVictory()
+    {
+
+    }
 }

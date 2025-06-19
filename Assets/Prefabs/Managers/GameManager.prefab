@@ -47,3 +47,4 @@ MonoBehaviour:
   player: {fileID: 0}
   hudPrefab: {fileID: 6629558683900201523, guid: 98205e53fdd0093479da6af7db7de898, type: 3}
   playerPrefab: {fileID: 4675158630529199485, guid: cb20e3d8342d68744a7f09ea75da4793, type: 3}
+  eventSystem: {fileID: 4827756959469868719, guid: 3824d472dc31e5c439d7c61df8431f62, type: 3}

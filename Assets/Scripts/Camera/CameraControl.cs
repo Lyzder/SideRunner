@@ -16,8 +16,7 @@ public class CameraControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        follow = GameManager.Instance.player.transform;
-        SetFollow();
+        
     }
 
     // Update is called once per frame

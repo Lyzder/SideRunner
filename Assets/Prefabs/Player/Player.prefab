@@ -194,6 +194,7 @@ MonoBehaviour:
   damageRecoilHorizontal: 3
   damageRecoilVertical: 3
   stompHitbox: {fileID: 6858825147757187031}
+  deadTime: 2
   jumpEffect: {fileID: 282208382094743071, guid: 7949040c53bdd964bbd34c8cc74c155c, type: 3}
   shootEffect: {fileID: 8039358606523259641, guid: 246e5edc72e581444b5072bbecb119a9, type: 3}
   pickupEffect: {fileID: 1116505444375570710, guid: 0747ca3c4c635254b9ac9a8e80d9273d, type: 3}
@@ -204,7 +205,7 @@ MonoBehaviour:
   hurtSfx: {fileID: 8300000, guid: 192083559e411c444a5e8846e0e33d31, type: 3}
   noAmmoSfx: {fileID: 8300000, guid: 5b6d54251078a13468b45dccbb6680d3, type: 3}
   reloadSfx: {fileID: 8300000, guid: d56b49201a1b3264fb89879a7347c755, type: 3}
-  deadSfx: {fileID: 0}
+  deadSfx: {fileID: 8300000, guid: 8e02f1a4b5a4c1e4c9a6221f5db7add2, type: 3}
 --- !u!95 &6346388047930343913
 Animator:
   serializedVersion: 5

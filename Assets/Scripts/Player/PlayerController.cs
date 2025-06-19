@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float damageRecoilHorizontal;
     [SerializeField] private float damageRecoilVertical;
     [SerializeField] private BoxCollider2D stompHitbox;
+    [SerializeField] private float deadTime;
+    private float deadTimer;
     private bool ignoreCollision;
     private float damageFramesTimer;
     [Header("Effects")]
@@ -72,6 +74,7 @@ public class PlayerController : MonoBehaviour
     // Events
     public event Action<short> OnHealthChanged;
     public event Action<short> OnAmmoChanged;
+    public event Action OnDeath;
 
     private void Awake()
     {
@@ -83,6 +86,7 @@ public class PlayerController : MonoBehaviour
         coyoteTimer = 0;
         jumpQueued = false;
         jumped =  false;
+        isAlive = true;
         // Initialize Input Actions
         inputActions = new InputSystem_Actions();
     }
@@ -116,6 +120,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isAlive)
+            return;
         if (!isGrounded)
             RunCoyoteTimer();
         if (shotCdTimer > 0)
@@ -125,6 +131,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!isAlive)
+            return;
         if (jumpQueued)
         {
             Jump();
@@ -232,7 +240,6 @@ public class PlayerController : MonoBehaviour
 
             if (Mathf.Abs(normal.x) > Mathf.Abs(normal.y))
             {
-                Debug.Log("Side collision detected with Wall");
                 ChangeDirection();
                 TemporarilyIgnoreCollision(0.1f);
             }
@@ -258,7 +265,6 @@ public class PlayerController : MonoBehaviour
 
                 if (Mathf.Abs(normal.x) > Mathf.Abs(normal.y))
                 {
-                    Debug.Log("Side collision detected with Wall");
                     ChangeDirection();
                     TemporarilyIgnoreCollision(0.1f);
                     return;
@@ -347,9 +353,8 @@ public class PlayerController : MonoBehaviour
         {
             isAlive = false;
             animator.SetBool("IsDead", true);
-            //DisableControl();
             moveInput = 0;
-            //StartCoroutine(DeadSequence());
+            StartCoroutine(DeadSequence());
             DamageRecoil(2f);
             AudioManager.Instance.PlaySFX(deadSfx);
         }
@@ -449,5 +454,16 @@ public class PlayerController : MonoBehaviour
     public void PlayPickup()
     {
         Instantiate(pickupEffect, transform);
+    }
+
+    private IEnumerator DeadSequence()
+    {
+        deadTimer = 0;
+        while (deadTimer < deadTime)
+        {
+            deadTimer += Time.deltaTime;
+            yield return null;
+        }
+        OnDeath?.Invoke();
     }
 }

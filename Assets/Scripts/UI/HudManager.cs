@@ -10,6 +10,8 @@ public class HudManager : MonoBehaviour
     [SerializeField] private Image[] hpBar;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI ammoText;
+    [SerializeField] private GameObject winScreen;
+    [SerializeField] private GameObject loseScreen;
     [Header("Sprites")]
     [SerializeField] private Sprite fullHeart;
     [SerializeField] private Sprite emptyHeart;
@@ -24,8 +26,9 @@ public class HudManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        UpdateScore(GameManager.Instance.GetScore());
     }
+
     private void OnEnable()
     {
         GameManager.Instance.OnPlayerRegistered += HandlePlayerRegistered;
@@ -47,6 +50,7 @@ public class HudManager : MonoBehaviour
         {
             player.OnHealthChanged -= UpdateHealth;
             player.OnAmmoChanged -= UpdateAmmo;
+            player.OnDeath -= ShowLoseScreen;
         }
     }
 
@@ -82,6 +86,7 @@ public class HudManager : MonoBehaviour
         {
             this.player.OnHealthChanged -= UpdateHealth;
             this.player.OnAmmoChanged -= UpdateAmmo;
+            this.player.OnDeath -= ShowLoseScreen;
         }
 
         this.player = player;
@@ -90,6 +95,27 @@ public class HudManager : MonoBehaviour
         {
             this.player.OnHealthChanged += UpdateHealth;
             this.player.OnAmmoChanged += UpdateAmmo;
+            this.player.OnDeath += ShowLoseScreen;
         }
+    }
+
+    private void ShowWinScreen()
+    {
+
+    }
+
+    private void ShowLoseScreen()
+    {
+        loseScreen.SetActive(true);
+    }
+
+    public void MenuButtonClick()
+    {
+        GameManager.Instance.LoadScene("MainMenu");
+    }
+
+    public void RetryButtonClick()
+    {
+        GameManager.Instance.LoadSceneAndSpawnPlayer("Level1", new Vector3(-7, -0.4f));
     }
 }
