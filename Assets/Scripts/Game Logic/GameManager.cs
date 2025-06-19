@@ -1,3 +1,4 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -71,6 +72,7 @@ public class GameManager : MonoBehaviour
         // Unsubscribe to avoid being called again for future scenes
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.SetActiveScene(scene);
+        SceneManager.UnloadSceneAsync(previousScene);
 
         if (!shouldSpawnPlayer)
             return;
@@ -86,8 +88,8 @@ public class GameManager : MonoBehaviour
         player.transform.position = targetSpawnPosition;
         shouldSpawnPlayer = false;
 
+        //SetCameraFollow();
         activeHud = Instantiate(hudPrefab);
-        SceneManager.UnloadSceneAsync(previousScene);
     }
 
     public void AddScore(int score)
@@ -101,4 +103,11 @@ public class GameManager : MonoBehaviour
         this.player = player;
         OnPlayerRegistered?.Invoke(player);
     }
+
+    //private void SetCameraFollow()
+    //{
+    //    GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
+    //    CinemachineVirtualCamera virtualCamera = camera.GetComponentInChildren<CinemachineVirtualCamera>();
+    //    virtualCamera.Follow = player.gameObject.transform;
+    //}
 }

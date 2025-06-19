@@ -76,7 +76,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1380552245
-  m_SortingLayer: 1
+  m_SortingLayer: 4
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 5fb0c113a111a72449a8ed9fe9042f0f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -196,6 +196,7 @@ MonoBehaviour:
   stompHitbox: {fileID: 6858825147757187031}
   jumpEffect: {fileID: 282208382094743071, guid: 7949040c53bdd964bbd34c8cc74c155c, type: 3}
   shootEffect: {fileID: 8039358606523259641, guid: 246e5edc72e581444b5072bbecb119a9, type: 3}
+  pickupEffect: {fileID: 1116505444375570710, guid: 0747ca3c4c635254b9ac9a8e80d9273d, type: 3}
   jumpEffectOffset: {x: 0, y: 0.15, z: 0}
   shootEffectOffset: {x: 0.45, y: -0.17, z: 0}
   jumpSfx: {fileID: 8300000, guid: 77c72cf1d06bab449849f67f16fb5d45, type: 3}
@@ -203,6 +204,7 @@ MonoBehaviour:
   hurtSfx: {fileID: 8300000, guid: 192083559e411c444a5e8846e0e33d31, type: 3}
   noAmmoSfx: {fileID: 8300000, guid: 5b6d54251078a13468b45dccbb6680d3, type: 3}
   reloadSfx: {fileID: 8300000, guid: d56b49201a1b3264fb89879a7347c755, type: 3}
+  deadSfx: {fileID: 0}
 --- !u!95 &6346388047930343913
 Animator:
   serializedVersion: 5

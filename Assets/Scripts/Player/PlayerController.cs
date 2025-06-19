@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float damageRecoilHorizontal;
     [SerializeField] private float damageRecoilVertical;
     [SerializeField] private BoxCollider2D stompHitbox;
-    private float iFramesTimer;
+    private bool ignoreCollision;
     private float damageFramesTimer;
     [Header("Effects")]
     [SerializeField] GameObject jumpEffect;
@@ -232,8 +232,9 @@ public class PlayerController : MonoBehaviour
 
             if (Mathf.Abs(normal.x) > Mathf.Abs(normal.y))
             {
-                //Debug.Log("Side collision detected with Wall");
+                Debug.Log("Side collision detected with Wall");
                 ChangeDirection();
+                TemporarilyIgnoreCollision(0.1f);
             }
         }
         else if (collision.gameObject.CompareTag("Enemy"))
@@ -241,6 +242,41 @@ public class PlayerController : MonoBehaviour
             //TODO
             TakeDamage();
         }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (ignoreCollision)
+            return;
+        if (collision.gameObject.CompareTag("Solid"))
+        {
+            ContactPoint2D[] contacts = collision.contacts;
+            Vector2 normal;
+            foreach (ContactPoint2D contactPoint in contacts)
+            {
+                normal = contactPoint.normal;
+
+                if (Mathf.Abs(normal.x) > Mathf.Abs(normal.y))
+                {
+                    Debug.Log("Side collision detected with Wall");
+                    ChangeDirection();
+                    TemporarilyIgnoreCollision(0.1f);
+                    return;
+                }
+            }
+        }
+    }
+
+    public void TemporarilyIgnoreCollision(float duration)
+    {
+        StartCoroutine(IgnoreCollisionRoutine(duration));
+    }
+
+    private IEnumerator IgnoreCollisionRoutine(float duration)
+    {
+        ignoreCollision = true;
+        yield return new WaitForSeconds(duration);
+        ignoreCollision = false;
     }
 
     private void CheckGrounded()
@@ -256,7 +292,7 @@ public class PlayerController : MonoBehaviour
         else if (playerState != States.Damage)
         {
             stompHitbox.enabled = true;
-            collider2d.size = new Vector2(0.8f, 0.75f);
+            collider2d.size = new Vector2(0.8f, 0.65f);
         }
     }
 
@@ -278,7 +314,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void ChangeDirection()
+    public void ChangeDirection()
     {
         moveDirection *= -1;
         FlipSprite();

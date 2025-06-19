@@ -18,7 +18,7 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
-        GameManager.Instance.LoadSceneAndSpawnPlayer("TestRoom", Vector3.zero);
+        GameManager.Instance.LoadSceneAndSpawnPlayer("Level1", new Vector3(-7, -0.4f));
     }
 
     public void ExitGame()

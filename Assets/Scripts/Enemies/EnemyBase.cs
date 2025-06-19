@@ -235,6 +235,7 @@ public abstract class EnemyBase : MonoBehaviour
         {
             enemyState = EnemyStates.Idle;
             waitTimer = idleTime;
+            rb.velocity = Vector2.zero;
             return;
         }
         if (math.abs(transform.position.x - targetPosition.x) > 0.3)
@@ -247,5 +248,15 @@ public abstract class EnemyBase : MonoBehaviour
     private void UpdateAnimator()
     {
         animator.SetFloat("Speed", math.abs(rb.velocity.x));
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            enemyState = EnemyStates.Cooldown;
+            rb.velocity = Vector3.zero;
+            waitTimer = attackCooldown;
+        }
     }
 }
