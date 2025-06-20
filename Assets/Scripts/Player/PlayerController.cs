@@ -107,6 +107,7 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Move.canceled += OnMoveCanceled;
         inputActions.Player.Jump.performed += OnJumpPerformed;
         inputActions.Player.Attack.performed += OnAttackPerformed;
+        GameManager.Instance.OnWinning += DisableControls;
     }
 
     private void OnDisable()
@@ -116,6 +117,7 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Move.canceled -= OnMoveCanceled;
         inputActions.Player.Jump.performed -= OnJumpPerformed;
         inputActions.Player.Attack.performed -= OnAttackPerformed;
+        GameManager.Instance.OnWinning -= DisableControls;
     }
 
     // Update is called once per frame
@@ -358,6 +360,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(DeadSequence());
             DamageRecoil(2f);
             AudioManager.Instance.PlaySFX(deadSfx);
+            DisableControls();
         }
         else
         {
@@ -467,5 +470,32 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         OnDeath?.Invoke();
+    }
+
+    public void SetHp(short hp)
+    {
+        this.hp = hp;
+        OnHealthChanged?.Invoke(hp);
+    }
+
+    public void SetAmmo(short ammo)
+    {
+        this.ammo = ammo;
+        OnAmmoChanged?.Invoke(ammo);
+    }
+
+    public short GetHp()
+    {
+        return hp;
+    }
+
+    public short GetAmmo()
+    {
+        return ammo;
+    }
+
+    private void DisableControls()
+    {
+        inputActions.Disable();
     }
 }

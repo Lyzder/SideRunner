@@ -17,12 +17,6 @@ public class Boss : EnemyBase
         _renderer = GetComponent<SpriteRenderer>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     protected override void TriggerDeath()
     {
         StartCoroutine(DyingSequence());

@@ -46,15 +46,18 @@ TagManager:
   - name: Background
     uniqueID: 3457510495
     locked: 0
+  - name: Props Background
+    uniqueID: 2147096053
+    locked: 0
   - name: Level
     uniqueID: 801664151
-    locked: 0
-  - name: Level Props
-    uniqueID: 2147096053
     locked: 0
   - name: Entities
     uniqueID: 1380552245
     locked: 0
   - name: Effects
     uniqueID: 1661907117
+    locked: 0
+  - name: Props Foreground
+    uniqueID: 3534734735
     locked: 0

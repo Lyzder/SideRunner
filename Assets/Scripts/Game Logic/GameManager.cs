@@ -16,7 +16,9 @@ public class GameManager : MonoBehaviour
     private bool shouldSpawnPlayer = false;
     private string previousScene;
     public PlayerController player;
+    private short currentHp, currentAmmo;
     private Boss boss;
+    public float winTime;
     [Header("Prefabs")]
     [SerializeField] GameObject hudPrefab;
     [SerializeField] GameObject playerPrefab;
@@ -25,6 +27,7 @@ public class GameManager : MonoBehaviour
     // Events
     public event Action<int> OnScoreChanged;
     public event Action<PlayerController> OnPlayerRegistered;
+    public event Action OnWinning;
 
     private void Awake()
     {
@@ -43,6 +46,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentAmmo = 3;
+        currentHp = 5;
+        AudioManager.Instance.PlaySceneBgm();
     }
 
     // Update is called once per frame
@@ -96,12 +102,15 @@ public class GameManager : MonoBehaviour
         if (!shouldSpawnPlayer)
             return;
 
-        GameObject player = Instantiate(playerPrefab);
+        GameObject playerObject = Instantiate(playerPrefab);
 
-        player.transform.position = targetSpawnPosition;
+        playerObject.transform.position = targetSpawnPosition;
+        player = playerObject.GetComponent<PlayerController>();
         shouldSpawnPlayer = false;
 
         activeHud = Instantiate(hudPrefab);
+        player.SetAmmo(currentAmmo);
+        player.SetHp(currentHp);
     }
 
     public void AddScore(int score)
@@ -135,6 +144,38 @@ public class GameManager : MonoBehaviour
 
     private void TriggerVictory()
     {
+        StartCoroutine(WinSequence());
+    }
 
+    private IEnumerator WinSequence()
+    {
+        float elapsed = 0f;
+
+        while (elapsed < winTime)
+        {
+            elapsed += Time.deltaTime;
+            yield return null; // wait for next rendered frame
+        }
+
+        OnWinning?.Invoke();
+    }
+
+    public void ResetStats()
+    {
+        score = 0;
+        currentAmmo = 3;
+        currentHp = 5;
+    }
+
+    public void StoreStats()
+    {
+        currentAmmo = player.GetAmmo();
+        currentHp = player.GetHp();
+    }
+
+    public void TransitionLevel(string sceneName, Vector3 coordinates)
+    {
+        StoreStats();
+        LoadSceneAndSpawnPlayer(sceneName, coordinates);
     }
 }

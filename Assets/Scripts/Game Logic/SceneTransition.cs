@@ -23,7 +23,7 @@ public class SceneTransition : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            GameManager.Instance.LoadSceneAndSpawnPlayer(scene, coordinates);
+            GameManager.Instance.TransitionLevel(scene, coordinates);
         }
     }
 }

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] GameObject mainMenu;
+    [SerializeField] GameObject instructions;
+    [SerializeField] GameObject credits;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,12 +21,33 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
-        //GameManager.Instance.LoadSceneAndSpawnPlayer("Level1", new Vector3(-7, -0.4f));
-        GameManager.Instance.LoadSceneAndSpawnPlayer("Level2", new Vector3(-6.25f, -1.5f));
+        GameManager.Instance.ResetStats();
+        GameManager.Instance.LoadSceneAndSpawnPlayer("Level1", new Vector3(-7, -0.4f));
     }
 
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    public void ShowInstructions()
+    {
+        mainMenu.SetActive(false);
+        instructions.SetActive(true);
+        credits.SetActive(false);
+    }
+
+    public void ShowCredits()
+    {
+        mainMenu.SetActive(false);
+        instructions.SetActive(false);
+        credits.SetActive(true);
+    }
+
+    public void BackToMenu()
+    {
+        mainMenu.SetActive(true);
+        instructions.SetActive(false);
+        credits.SetActive(false);
     }
 }

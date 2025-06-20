@@ -12,6 +12,7 @@ public class HudManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI ammoText;
     [SerializeField] private GameObject winScreen;
     [SerializeField] private GameObject loseScreen;
+    [SerializeField] private TextMeshProUGUI scoreResult;
     [Header("Sprites")]
     [SerializeField] private Sprite fullHeart;
     [SerializeField] private Sprite emptyHeart;
@@ -33,6 +34,7 @@ public class HudManager : MonoBehaviour
     {
         GameManager.Instance.OnPlayerRegistered += HandlePlayerRegistered;
         GameManager.Instance.OnScoreChanged += UpdateScore;
+        GameManager.Instance.OnWinning += ShowWinScreen;
 
         // If a player is already registered (e.g., on scene reload), subscribe immediately
         if (GameManager.Instance.player != null)
@@ -45,6 +47,7 @@ public class HudManager : MonoBehaviour
     {
         GameManager.Instance.OnPlayerRegistered -= HandlePlayerRegistered;
         GameManager.Instance.OnScoreChanged -= UpdateScore;
+        GameManager.Instance.OnWinning -= ShowWinScreen;
 
         if (player != null)
         {
@@ -101,7 +104,8 @@ public class HudManager : MonoBehaviour
 
     private void ShowWinScreen()
     {
-
+        scoreResult.text = "SCORE: " + GameManager.Instance.GetScore().ToString();
+        winScreen.SetActive(true);
     }
 
     private void ShowLoseScreen()
@@ -116,6 +120,7 @@ public class HudManager : MonoBehaviour
 
     public void RetryButtonClick()
     {
+        GameManager.Instance.ResetStats();
         GameManager.Instance.LoadSceneAndSpawnPlayer("Level1", new Vector3(-7, -0.4f));
     }
 }
