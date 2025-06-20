@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviour
     public Vector3 shootEffectOffset;
     [Header("Sound Effects")]
     [SerializeField] private AudioClip jumpSfx;
+    [SerializeField] private AudioClip stompSfx;
     [SerializeField] private AudioClip shootSfx;
     [SerializeField] private AudioClip hurtSfx;
     [SerializeField] private AudioClip noAmmoSfx;
@@ -430,6 +431,7 @@ public class PlayerController : MonoBehaviour
     {
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.AddForce(new Vector2(0, bounceSpeed), ForceMode2D.Impulse);
+        AudioManager.Instance.PlaySFX(stompSfx);
     }
 
     public void OnStomp()

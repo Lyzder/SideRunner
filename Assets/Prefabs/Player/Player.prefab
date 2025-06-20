@@ -201,6 +201,7 @@ MonoBehaviour:
   jumpEffectOffset: {x: 0, y: 0.15, z: 0}
   shootEffectOffset: {x: 0.45, y: -0.17, z: 0}
   jumpSfx: {fileID: 8300000, guid: 77c72cf1d06bab449849f67f16fb5d45, type: 3}
+  stompSfx: {fileID: 8300000, guid: 1480904e216631d4cb7f0ebe1a47cea8, type: 3}
   shootSfx: {fileID: 8300000, guid: 235e8584a7e581145a9e715f3a31d3ab, type: 3}
   hurtSfx: {fileID: 8300000, guid: 192083559e411c444a5e8846e0e33d31, type: 3}
   noAmmoSfx: {fileID: 8300000, guid: 5b6d54251078a13468b45dccbb6680d3, type: 3}

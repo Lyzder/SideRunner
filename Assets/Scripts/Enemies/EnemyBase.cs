@@ -94,6 +94,7 @@ public abstract class EnemyBase : MonoBehaviour
             isAlive = false;
             animator.SetBool("IsDead", true);
             GameManager.Instance.AddScore(score);
+            rb.velocity = Vector3.zero;
             TriggerDeath();
         }
         else
